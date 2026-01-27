@@ -21,8 +21,8 @@ export async function POST(req: Request) {
         if (!crypto.timingSafeEqual(digest, signature)) {
             throw new Error("Invalid webhook signature");
         };
-        console.log("Webhook received:", body);
-
+        
+        console.log(body);
 
         // Logica segun el tipo de evento
         // se puede reemplazar con la logica que se necesite
@@ -32,9 +32,9 @@ export async function POST(req: Request) {
             const isSuccessful = body.data.attributes.status === "paid";
         }
 
-        Response.json({ message: "Webhook processed successfully" }, { status: 200 });
+        return Response.json({ message: "Webhook processed successfully" }, { status: 200 });
     } catch (error) {
-        console.error("Error processing webhook:", error);
-        Response.json({ message: "Error processing webhook" }, { status: 400 });
+        console.error(error);
+        return Response.json({ message: "Error processing webhook" }, { status: 400 });
     };
-}
+}   
