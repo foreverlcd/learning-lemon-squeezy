@@ -31,6 +31,8 @@ export async function POST(req: Request) {
             const userId = body.meta.custom_data.userId;
             const isSuccessful = body.data.attributes.status === "paid";
         }
+
+        Response.json({ message: "Webhook processed successfully" }, { status: 200 });
     } catch (error) {
         console.error("Error processing webhook:", error);
         Response.json({ message: "Error processing webhook" }, { status: 400 });
