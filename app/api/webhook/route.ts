@@ -2,6 +2,8 @@ import crypto from "crypto";
 
 export async function POST(req: Request) {
     try {
+        // Log del secret para depuración
+        console.log("LEMON_SQUEEZY_WEBHOOK_SIGNATURE:", process.env.LEMON_SQUEEZY_WEBHOOK_SIGNATURE);
         // Leer el rawBody de la request (Next.js App Router en Vercel)
         const rawBody = await getRawBody(req);
         const eventType = req.headers.get("X-Event-Name") || req.headers.get("x-event-name");
