@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Demo de Pagos Únicos con Lemon Squeezy
 
-## Getting Started
+Proyecto Next.js que implementa un flujo completo de pagos únicos con Lemon Squeezy, incluyendo autenticación, base de datos y webhooks.
 
-First, run the development server:
+## Características
 
+- ✅ Login simple por email
+- ✅ Base de datos con Prisma (SQLite)
+- ✅ Página de compra de tokens
+- ✅ Checkout de Lemon Squeezy
+- ✅ Webhook con verificación de firma
+- ✅ Idempotencia en webhooks
+- ✅ Redirección post-pago
+- ✅ Suma automática de tokens
+
+## Setup
+
+1. Instalar dependencias:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Configurar variables de entorno en `.env`:
+```env
+LEMON_SQUEEZY_API_KEY=your_api_key
+LEMON_SQUEEZY_WEBHOOK_SIGNATURE=your_webhook_signature
+LEMON_SQUEEZY_STORE_ID=your_store_id
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Inicializar base de datos:
+```bash
+pnpm db:push
+pnpm db:generate
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Iniciar desarrollo:
+```bash
+pnpm dev
+```
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+## Redireccionamiento en Lemon Squeezy
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Al crear el checkout, puedes definir la URL de redirección usando el parámetro `redirect_url` en `product_options`:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```js
+product_options: {
+	name: "100 Tokens",
+	description: "Compra de 100 tokens para la demo",
+	redirect_url: process.env.NEXT_PUBLIC_APP_URL + "/success" ||  "http://localhost:3000/success",
+},
+```
 
-## Deploy on Vercel
+Esto hará que, tras el pago, el usuario sea enviado automáticamente a la URL que definas.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
+## Flujo
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Login**: Usuario ingresa email → se crea sesión
+2. **Compra**: Usuario hace clic en "Comprar Tokens" → se crea Order pendiente → se redirige a Lemon Squeezy
+3. **Pago**: Usuario paga en Lemon Squeezy → webhook llega a `/api/webhook`
+4. **Webhook**: Verifica firma → actualiza Order a "paid" → suma tokens al usuario (idempotente)
+5. **Redirección**: Usuario vuelve a `/success` donde ve tokens actualizados
+
+## Endpoints
+
+- `POST /api/auth/login` - Login por email
+- `POST /api/auth/logout` - Logout
+- `GET /api/auth/me` - Obtener usuario actual
+- `POST /api/purchaseProduct` - Crear checkout
+- `POST /api/webhook` - Webhook de Lemon Squeezy
+
+## Páginas
+
+- `/` - Home (login o dashboard)
+- `/login` - Login
+- `/payment` - Página de compra
+- `/success` - Página de éxito post-pago
+
+## Base de Datos
+
+- `User` - Usuarios
+- `TokenBalance` - Balance de tokens por usuario
+- `Order` - Órdenes de compra
+- `WebhookEvent` - Eventos procesados (idempotencia)
+
+## Notas
+
+- Los tokens se suman únicamente cuando el webhook confirma pago (`status: "paid"`)
+- El webhook es idempotente: eventos duplicados no suman tokens dos veces
+- La sesión es simple (cookie con user.id) para demo; producción usar JWT seguro

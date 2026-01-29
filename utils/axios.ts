@@ -3,8 +3,6 @@ import axios from "axios";
 
 export const LEMON_SQUEEZY_ENDPOINT = "https://api.lemonsqueezy.com/v1";
 
-console.log("LEMON_SQUEEZY_API_KEY:", process.env.LEMON_SQUEEZY_API_KEY);
-
 export const lemonSqueezyApiInstance = axios.create({
     baseURL: LEMON_SQUEEZY_ENDPOINT,
     headers: {
