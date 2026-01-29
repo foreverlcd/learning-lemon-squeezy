@@ -1,9 +1,11 @@
 
-import PrismaClient from '@prisma/client';
+import PrismaPkg from '@prisma/client';
+const { PrismaClient } = PrismaPkg;
 
 
+type PrismaClientType = InstanceType<typeof PrismaClient>;
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+  prisma: PrismaClientType | undefined;
 };
 
 
