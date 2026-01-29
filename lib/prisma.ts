@@ -2,10 +2,10 @@
 import PrismaClient from '@prisma/client';
 
 
-
 const globalForPrisma = globalThis as unknown as {
-  prisma: InstanceType<typeof PrismaClient> | undefined;
+  prisma: PrismaClient | undefined;
 };
+
 
 
 export const prisma =
