@@ -20,12 +20,13 @@ Proyecto Next.js que implementa un flujo completo de pagos únicos con Lemon Squ
 pnpm install
 ```
 
-2. Configurar variables de entorno en `.env`:
+
+2. Configurar variables de entorno en `.env.public` (ejemplo real) -> .env + variables reales:
 ```env
-LEMON_SQUEEZY_API_KEY=your_api_key
-LEMON_SQUEEZY_WEBHOOK_SIGNATURE=your_webhook_signature
-LEMON_SQUEEZY_STORE_ID=your_store_id
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
+LEMON_SQUEEZY_API_KEY=mi-clave-api-segura
+LEMON_SQUEEZY_STORE_ID=id-de-mi-tienda
+LEMON_SQUEEZY_WEBHOOK_SIGNATURE=mi-clave-de-webhook-seguro
+NEXT+PUBLIC_APP_URL=https://mi-link-de-produccion.com
 ```
 
 3. Inicializar base de datos:
